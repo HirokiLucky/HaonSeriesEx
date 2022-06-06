@@ -14,20 +14,34 @@ public class UnityChanScript : MonoBehaviour
     private Rigidbody rb;
     private Animator animator;
     private float speed = 20.0f;
-    private float rotateSpeed = 150f;
+    private float jumpPower = 400f;
     private direction d = direction.right;
+    private bool isGround = true;
     private static readonly int Speed = Animator.StringToHash("speed");
+    private static readonly int Jump = Animator.StringToHash("jump");
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
-        
     }
 
     //Update is called once per frame
     void Update()
+    {
+        Move();
+        JumpCheck();
+    }
+
+    private void FixedUpdate()
+    {
+        float x = Input.GetAxis("Horizontal") * speed;
+        Vector3 v = new Vector3(x, 0, 0);
+        rb.AddForce(v);
+    }
+
+    void Move()
     {
         if (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.LeftShift))
         {
@@ -73,10 +87,25 @@ public class UnityChanScript : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
+    void JumpCheck()
     {
-        float x = Input.GetAxis("Horizontal") * speed;
-        Vector3 v = new Vector3(x, 0, 0);
-        rb.AddForce(v);
+        if (isGround)
+        {
+            if (Input.GetKeyDown(KeyCode.W))
+            {
+                isGround = false;
+                animator.SetBool(Jump, true);
+                rb.AddForce(new Vector3(0, jumpPower, 0));
+            }
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isGround = true;
+            animator.SetBool(Jump, false);
+        }
     }
 }
