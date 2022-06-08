@@ -13,7 +13,7 @@ public class UnityChanScript : MonoBehaviour
 {
     private Rigidbody rb;
     private Animator animator;
-    private float speed = 20.0f;
+    private float speed = 10.0f;
     private float jumpPower = 400f;
     private direction d = direction.right;
     private bool isGround = true;
