@@ -13,8 +13,10 @@ public class UnityChanScript : MonoBehaviour
 {
     private Rigidbody rb;
     private Animator animator;
-    private float speed = 10.0f;
-    private float jumpPower = 400f;
+    private float speed = 5.0f;
+    private float gravity = 20.0f;
+    private float gravityPower = -1000f;
+    private float jumpPower = 1000f;
     private direction d = direction.right;
     private bool isGround = true;
     private static readonly int Speed = Animator.StringToHash("speed");
@@ -36,9 +38,9 @@ public class UnityChanScript : MonoBehaviour
 
     private void FixedUpdate()
     {
+        Gravity();
         float x = Input.GetAxis("Horizontal") * speed;
-        Vector3 v = new Vector3(x, 0, 0);
-        rb.AddForce(v);
+        rb.velocity= new Vector3(x, rb.velocity.y, 0);
     }
 
     void Move()
@@ -95,8 +97,14 @@ public class UnityChanScript : MonoBehaviour
             {
                 isGround = false;
                 animator.SetBool(Jump, true);
-                rb.AddForce(new Vector3(0, jumpPower, 0));
+                rb.AddForce(transform.up * jumpPower, ForceMode.Impulse);
             }
+        }
+    }
+    
+    void Gravity() {
+        if (!isGround) {
+            rb.AddForce(new Vector3(0, gravityPower, 0));
         }
     }
 
